@@ -1,0 +1,7 @@
+package: github.com/softfn/admin-api
+import:
+- package: github.com/astaxie/beego
+  subpackages:
+  - orm
+- package: github.com/go-sql-driver/mysql
+- package: github.com/segmentio/ksuid
