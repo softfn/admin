@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,49 +10,60 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysRoleUser struct {
-	Id           int       `orm:"column(id);pk"`
-	RoleId       string    `orm:"column(role_id);size(27)"`
-	UserId       string    `orm:"column(user_id);size(27)"`
-	CreatedBy    string    `orm:"column(created_by);size(27)"`
-	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
+type SysUser struct {
+	Id            int       `orm:"column(id);pk"`
+	Name          string    `orm:"column(name);size(32);null"`
+	Username      string    `orm:"column(username);size(32)"`
+	Password      string    `orm:"column(password);size(32);null"`
+	LoginIp       string    `orm:"column(login_ip);size(50);null"`
+	LoginTime     time.Time `orm:"column(login_time);type(datetime);null"`
+	LastLoginIp   string    `orm:"column(last_login_ip);size(50);null"`
+	LastLoginTime time.Time `orm:"column(last_login_time);type(datetime);null"`
+	FailedCount   int       `orm:"column(failed_count);null"`
+	DelFlag       int8      `orm:"column(del_flag);null"`
+	DelTime       time.Time `orm:"column(del_time);type(datetime);null"`
+	IsEnabled     int8      `orm:"column(is_enabled);null"`
+	LoginType     int8      `orm:"column(login_type);null"`
+	Description   string    `orm:"column(description);size(500);null"`
+	CreatedBy     string    `orm:"column(created_by);size(27)"`
+	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysRoleUser) TableName() string {
-	return "sys_role_user"
+func (t *SysUser) TableName() string {
+	return "sys_user"
 }
 
 func init() {
-	orm.RegisterModel(new(SysRoleUser))
+	orm.RegisterModel(new(SysUser))
 }
 
-// AddSysRoleUser insert a new SysRoleUser into database and returns
+// AddSysUser insert a new SysUser into database and returns
 // last inserted Id on success.
-func AddSysRoleUser(m *SysRoleUser) (id int64, err error) {
+func AddSysUser(m *SysUser) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysRoleUserById retrieves SysRoleUser by Id. Returns error if
+// GetSysUserById retrieves SysUser by Id. Returns error if
 // Id doesn't exist
-func GetSysRoleUserById(id int) (v *SysRoleUser, err error) {
+func GetSysUserById(id int) (v *SysUser, err error) {
 	o := orm.NewOrm()
-	v = &SysRoleUser{Id: id}
+	v = &SysUser{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysRoleUser retrieves all SysRoleUser matches certain condition. Returns empty list if
+// GetAllSysUser retrieves all SysUser matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysRoleUser(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysUser(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysRoleUser))
+	qs := o.QueryTable(new(SysUser))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -102,7 +113,7 @@ func GetAllSysRoleUser(query map[string]string, fields []string, sortby []string
 		}
 	}
 
-	var l []SysRoleUser
+	var l []SysUser
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -125,11 +136,11 @@ func GetAllSysRoleUser(query map[string]string, fields []string, sortby []string
 	return nil, err
 }
 
-// UpdateSysRoleUser updates SysRoleUser by Id and returns error if
+// UpdateSysUser updates SysUser by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysRoleUserById(m *SysRoleUser) (err error) {
+func UpdateSysUserById(m *SysUser) (err error) {
 	o := orm.NewOrm()
-	v := SysRoleUser{Id: m.Id}
+	v := SysUser{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -140,15 +151,15 @@ func UpdateSysRoleUserById(m *SysRoleUser) (err error) {
 	return
 }
 
-// DeleteSysRoleUser deletes SysRoleUser by Id and returns error if
+// DeleteSysUser deletes SysUser by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysRoleUser(id int) (err error) {
+func DeleteSysUser(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysRoleUser{Id: id}
+	v := SysUser{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysRoleUser{Id: id}); err == nil {
+		if num, err = o.Delete(&SysUser{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

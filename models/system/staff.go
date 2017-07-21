@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,55 +10,70 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysMenu struct {
-	Id           int       `orm:"column(id);pk"`
-	ParentId     string    `orm:"column(parent_id);size(27);null"`
-	Name         string    `orm:"column(name);size(32)"`
-	Url          string    `orm:"column(url);size(500);null"`
-	Seq          int8      `orm:"column(seq);null"`
-	Visible      int8      `orm:"column(visible);null"`
-	Tooltip      string    `orm:"column(tooltip);size(64);null"`
-	Style        string    `orm:"column(style);size(500);null"`
-	Description  string    `orm:"column(description);size(500);null"`
-	CreatedBy    string    `orm:"column(created_by);size(27)"`
-	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
+type SysStaff struct {
+	Id            int       `orm:"column(id);pk"`
+	ChName        string    `orm:"column(ch_name);size(16);null"`
+	ChPy          string    `orm:"column(ch_py);size(32);null"`
+	EnName        string    `orm:"column(en_name);size(32);null"`
+	Username      string    `orm:"column(username);size(32)"`
+	EmpNo         string    `orm:"column(emp_no);size(128);null"`
+	EmpStatus     int8      `orm:"column(emp_status);null"`
+	Position      string    `orm:"column(position);size(32);null"`
+	Rank          string    `orm:"column(rank);size(32);null"`
+	Birthday      time.Time `orm:"column(birthday);type(datetime);null"`
+	IdCardNo      string    `orm:"column(id_card_no);size(32);null"`
+	EntryTime     time.Time `orm:"column(entry_time);type(datetime);null"`
+	Email         string    `orm:"column(email);size(200);null"`
+	PostalAddress string    `orm:"column(postal_address);size(256);null"`
+	PostalCode    string    `orm:"column(postal_code);size(32);null"`
+	HomeAddress   string    `orm:"column(home_address);size(500);null"`
+	MobileNo      string    `orm:"column(mobile_no);size(16);null"`
+	Telephone     string    `orm:"column(telephone);size(16);null"`
+	Sex           int8      `orm:"column(sex);null"`
+	IsEnabled     int8      `orm:"column(is_enabled);null"`
+	DelFlag       int8      `orm:"column(del_flag);null"`
+	DelTime       time.Time `orm:"column(del_time);type(datetime);null"`
+	Description   string    `orm:"column(description);size(500);null"`
+	OriginId      string    `orm:"column(origin_id);size(64);null"`
+	CreatedBy     string    `orm:"column(created_by);size(27)"`
+	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysMenu) TableName() string {
-	return "sys_menu"
+func (t *SysStaff) TableName() string {
+	return "sys_staff"
 }
 
 func init() {
-	orm.RegisterModel(new(SysMenu))
+	orm.RegisterModel(new(SysStaff))
 }
 
-// AddSysMenu insert a new SysMenu into database and returns
+// AddSysStaff insert a new SysStaff into database and returns
 // last inserted Id on success.
-func AddSysMenu(m *SysMenu) (id int64, err error) {
+func AddSysStaff(m *SysStaff) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysMenuById retrieves SysMenu by Id. Returns error if
+// GetSysStaffById retrieves SysStaff by Id. Returns error if
 // Id doesn't exist
-func GetSysMenuById(id int) (v *SysMenu, err error) {
+func GetSysStaffById(id int) (v *SysStaff, err error) {
 	o := orm.NewOrm()
-	v = &SysMenu{Id: id}
+	v = &SysStaff{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysMenu retrieves all SysMenu matches certain condition. Returns empty list if
+// GetAllSysStaff retrieves all SysStaff matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysMenu(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysStaff(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysMenu))
+	qs := o.QueryTable(new(SysStaff))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -108,7 +123,7 @@ func GetAllSysMenu(query map[string]string, fields []string, sortby []string, or
 		}
 	}
 
-	var l []SysMenu
+	var l []SysStaff
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -131,11 +146,11 @@ func GetAllSysMenu(query map[string]string, fields []string, sortby []string, or
 	return nil, err
 }
 
-// UpdateSysMenu updates SysMenu by Id and returns error if
+// UpdateSysStaff updates SysStaff by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysMenuById(m *SysMenu) (err error) {
+func UpdateSysStaffById(m *SysStaff) (err error) {
 	o := orm.NewOrm()
-	v := SysMenu{Id: m.Id}
+	v := SysStaff{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -146,15 +161,15 @@ func UpdateSysMenuById(m *SysMenu) (err error) {
 	return
 }
 
-// DeleteSysMenu deletes SysMenu by Id and returns error if
+// DeleteSysStaff deletes SysStaff by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysMenu(id int) (err error) {
+func DeleteSysStaff(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysMenu{Id: id}
+	v := SysStaff{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysMenu{Id: id}); err == nil {
+		if num, err = o.Delete(&SysStaff{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

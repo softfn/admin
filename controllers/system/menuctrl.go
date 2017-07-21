@@ -1,22 +1,22 @@
-package controllers
+package system
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/softfn/admin/models"
+	ms "github.com/softfn/admin/models/system"
 	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
 )
 
-// SysUserController operations for SysUser
-type SysUserController struct {
+// SysMenuController operations for SysMenu
+type SysMenuController struct {
 	beego.Controller
 }
 
 // URLMapping ...
-func (c *SysUserController) URLMapping() {
+func (c *SysMenuController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
@@ -26,15 +26,15 @@ func (c *SysUserController) URLMapping() {
 
 // Post ...
 // @Title Post
-// @Description create SysUser
-// @Param	body		body 	models.SysUser	true		"body for SysUser content"
-// @Success 201 {int} models.SysUser
+// @Description create SysMenu
+// @Param	body		body 	ms.SysMenu	true		"body for SysMenu content"
+// @Success 201 {int} ms.SysMenu
 // @Failure 403 body is empty
 // @router / [post]
-func (c *SysUserController) Post() {
-	var v models.SysUser
+func (c *SysMenuController) Post() {
+	var v ms.SysMenu
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if _, err := models.AddSysUser(&v); err == nil {
+		if _, err := ms.AddSysMenu(&v); err == nil {
 			c.Ctx.Output.SetStatus(201)
 			c.Data["json"] = v
 		} else {
@@ -48,15 +48,15 @@ func (c *SysUserController) Post() {
 
 // GetOne ...
 // @Title Get One
-// @Description get SysUser by id
+// @Description get SysMenu by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.SysUser
+// @Success 200 {object} ms.SysMenu
 // @Failure 403 :id is empty
 // @router /:id [get]
-func (c *SysUserController) GetOne() {
+func (c *SysMenuController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetSysUserById(id)
+	v, err := ms.GetSysMenuById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -67,17 +67,17 @@ func (c *SysUserController) GetOne() {
 
 // GetAll ...
 // @Title Get All
-// @Description get SysUser
+// @Description get SysMenu
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.SysUser
+// @Success 200 {object} ms.SysMenu
 // @Failure 403
 // @router / [get]
-func (c *SysUserController) GetAll() {
+func (c *SysMenuController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -119,7 +119,7 @@ func (c *SysUserController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllSysUser(query, fields, sortby, order, offset, limit)
+	l, err := ms.GetAllSysMenu(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -130,18 +130,18 @@ func (c *SysUserController) GetAll() {
 
 // Put ...
 // @Title Put
-// @Description update the SysUser
+// @Description update the SysMenu
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.SysUser	true		"body for SysUser content"
-// @Success 200 {object} models.SysUser
+// @Param	body		body 	ms.SysMenu	true		"body for SysMenu content"
+// @Success 200 {object} ms.SysMenu
 // @Failure 403 :id is not int
 // @router /:id [put]
-func (c *SysUserController) Put() {
+func (c *SysMenuController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v := models.SysUser{Id: id}
+	v := ms.SysMenu{Id: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if err := models.UpdateSysUserById(&v); err == nil {
+		if err := ms.UpdateSysMenuById(&v); err == nil {
 			c.Data["json"] = "OK"
 		} else {
 			c.Data["json"] = err.Error()
@@ -154,15 +154,15 @@ func (c *SysUserController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the SysUser
+// @Description delete the SysMenu
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
 // @router /:id [delete]
-func (c *SysUserController) Delete() {
+func (c *SysMenuController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	if err := models.DeleteSysUser(id); err == nil {
+	if err := ms.DeleteSysMenu(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

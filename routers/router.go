@@ -15,7 +15,11 @@ import (
 
 func init() {
 	ns := beego.NewNamespace("/v1",
-
+		beego.NSNamespace("/sys_function",
+			beego.NSInclude(
+				&controllers.SysFunctionController{},
+			),
+		),
 		beego.NSNamespace("/sys_grant",
 			beego.NSInclude(
 				&controllers.SysGrantController{},

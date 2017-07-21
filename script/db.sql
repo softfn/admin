@@ -12,7 +12,7 @@ CREATE TABLE `sys_function` (
   `creation_date` datetime NOT NULL COMMENT '创建时间',
   `updated_by` varchar(27) CHARACTER SET utf8 DEFAULT NULL COMMENT '修改人标识',
   `update_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  PRIMARY KEY (`id`,`menu_id`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `idx_table_code` (`code`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='菜单功能表';
 

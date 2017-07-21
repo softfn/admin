@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,50 +10,51 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysOrgStaff struct {
+type SysFunction struct {
 	Id           int       `orm:"column(id);pk"`
-	StaffId      string    `orm:"column(staff_id);size(27)"`
-	OrgId        string    `orm:"column(org_id);size(64);null"`
-	BlongType    int8      `orm:"column(blong_type);null"`
+	MenuId       string    `orm:"column(menu_id);size(27)"`
+	Name         string    `orm:"column(name);size(32);null"`
+	Code         string    `orm:"column(code);size(64);null"`
+	Seq          int8      `orm:"column(seq);null"`
 	CreatedBy    string    `orm:"column(created_by);size(27)"`
 	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
 	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
 	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysOrgStaff) TableName() string {
-	return "sys_org_staff"
+func (t *SysFunction) TableName() string {
+	return "sys_function"
 }
 
 func init() {
-	orm.RegisterModel(new(SysOrgStaff))
+	orm.RegisterModel(new(SysFunction))
 }
 
-// AddSysOrgStaff insert a new SysOrgStaff into database and returns
+// AddSysFunction insert a new SysFunction into database and returns
 // last inserted Id on success.
-func AddSysOrgStaff(m *SysOrgStaff) (id int64, err error) {
+func AddSysFunction(m *SysFunction) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysOrgStaffById retrieves SysOrgStaff by Id. Returns error if
+// GetSysFunctionById retrieves SysFunction by Id. Returns error if
 // Id doesn't exist
-func GetSysOrgStaffById(id int) (v *SysOrgStaff, err error) {
+func GetSysFunctionById(id int) (v *SysFunction, err error) {
 	o := orm.NewOrm()
-	v = &SysOrgStaff{Id: id}
+	v = &SysFunction{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysOrgStaff retrieves all SysOrgStaff matches certain condition. Returns empty list if
+// GetAllSysFunction retrieves all SysFunction matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysOrgStaff(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysFunction(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysOrgStaff))
+	qs := o.QueryTable(new(SysFunction))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -103,7 +104,7 @@ func GetAllSysOrgStaff(query map[string]string, fields []string, sortby []string
 		}
 	}
 
-	var l []SysOrgStaff
+	var l []SysFunction
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -126,11 +127,11 @@ func GetAllSysOrgStaff(query map[string]string, fields []string, sortby []string
 	return nil, err
 }
 
-// UpdateSysOrgStaff updates SysOrgStaff by Id and returns error if
+// UpdateSysFunction updates SysFunction by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysOrgStaffById(m *SysOrgStaff) (err error) {
+func UpdateSysFunctionById(m *SysFunction) (err error) {
 	o := orm.NewOrm()
-	v := SysOrgStaff{Id: m.Id}
+	v := SysFunction{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -141,15 +142,15 @@ func UpdateSysOrgStaffById(m *SysOrgStaff) (err error) {
 	return
 }
 
-// DeleteSysOrgStaff deletes SysOrgStaff by Id and returns error if
+// DeleteSysFunction deletes SysFunction by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysOrgStaff(id int) (err error) {
+func DeleteSysFunction(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysOrgStaff{Id: id}
+	v := SysFunction{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysOrgStaff{Id: id}); err == nil {
+		if num, err = o.Delete(&SysFunction{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

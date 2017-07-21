@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,60 +10,50 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysUser struct {
-	Id            int       `orm:"column(id);pk"`
-	Name          string    `orm:"column(name);size(32);null"`
-	Username      string    `orm:"column(username);size(32)"`
-	Password      string    `orm:"column(password);size(32);null"`
-	LoginIp       string    `orm:"column(login_ip);size(50);null"`
-	LoginTime     time.Time `orm:"column(login_time);type(datetime);null"`
-	LastLoginIp   string    `orm:"column(last_login_ip);size(50);null"`
-	LastLoginTime time.Time `orm:"column(last_login_time);type(datetime);null"`
-	FailedCount   int       `orm:"column(failed_count);null"`
-	DelFlag       int8      `orm:"column(del_flag);null"`
-	DelTime       time.Time `orm:"column(del_time);type(datetime);null"`
-	IsEnabled     int8      `orm:"column(is_enabled);null"`
-	LoginType     int8      `orm:"column(login_type);null"`
-	Description   string    `orm:"column(description);size(500);null"`
-	CreatedBy     string    `orm:"column(created_by);size(27)"`
-	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
+type SysOrgStaff struct {
+	Id           int       `orm:"column(id);pk"`
+	StaffId      string    `orm:"column(staff_id);size(27)"`
+	OrgId        string    `orm:"column(org_id);size(64);null"`
+	BlongType    int8      `orm:"column(blong_type);null"`
+	CreatedBy    string    `orm:"column(created_by);size(27)"`
+	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysUser) TableName() string {
-	return "sys_user"
+func (t *SysOrgStaff) TableName() string {
+	return "sys_org_staff"
 }
 
 func init() {
-	orm.RegisterModel(new(SysUser))
+	orm.RegisterModel(new(SysOrgStaff))
 }
 
-// AddSysUser insert a new SysUser into database and returns
+// AddSysOrgStaff insert a new SysOrgStaff into database and returns
 // last inserted Id on success.
-func AddSysUser(m *SysUser) (id int64, err error) {
+func AddSysOrgStaff(m *SysOrgStaff) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysUserById retrieves SysUser by Id. Returns error if
+// GetSysOrgStaffById retrieves SysOrgStaff by Id. Returns error if
 // Id doesn't exist
-func GetSysUserById(id int) (v *SysUser, err error) {
+func GetSysOrgStaffById(id int) (v *SysOrgStaff, err error) {
 	o := orm.NewOrm()
-	v = &SysUser{Id: id}
+	v = &SysOrgStaff{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysUser retrieves all SysUser matches certain condition. Returns empty list if
+// GetAllSysOrgStaff retrieves all SysOrgStaff matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysUser(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysOrgStaff(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysUser))
+	qs := o.QueryTable(new(SysOrgStaff))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -113,7 +103,7 @@ func GetAllSysUser(query map[string]string, fields []string, sortby []string, or
 		}
 	}
 
-	var l []SysUser
+	var l []SysOrgStaff
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -136,11 +126,11 @@ func GetAllSysUser(query map[string]string, fields []string, sortby []string, or
 	return nil, err
 }
 
-// UpdateSysUser updates SysUser by Id and returns error if
+// UpdateSysOrgStaff updates SysOrgStaff by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysUserById(m *SysUser) (err error) {
+func UpdateSysOrgStaffById(m *SysOrgStaff) (err error) {
 	o := orm.NewOrm()
-	v := SysUser{Id: m.Id}
+	v := SysOrgStaff{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -151,15 +141,15 @@ func UpdateSysUserById(m *SysUser) (err error) {
 	return
 }
 
-// DeleteSysUser deletes SysUser by Id and returns error if
+// DeleteSysOrgStaff deletes SysOrgStaff by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysUser(id int) (err error) {
+func DeleteSysOrgStaff(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysUser{Id: id}
+	v := SysOrgStaff{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysUser{Id: id}); err == nil {
+		if num, err = o.Delete(&SysOrgStaff{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

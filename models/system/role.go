@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,70 +10,52 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysStaff struct {
-	Id            int       `orm:"column(id);pk"`
-	ChName        string    `orm:"column(ch_name);size(16);null"`
-	ChPy          string    `orm:"column(ch_py);size(32);null"`
-	EnName        string    `orm:"column(en_name);size(32);null"`
-	Username      string    `orm:"column(username);size(32)"`
-	EmpNo         string    `orm:"column(emp_no);size(128);null"`
-	EmpStatus     int8      `orm:"column(emp_status);null"`
-	Position      string    `orm:"column(position);size(32);null"`
-	Rank          string    `orm:"column(rank);size(32);null"`
-	Birthday      time.Time `orm:"column(birthday);type(datetime);null"`
-	IdCardNo      string    `orm:"column(id_card_no);size(32);null"`
-	EntryTime     time.Time `orm:"column(entry_time);type(datetime);null"`
-	Email         string    `orm:"column(email);size(200);null"`
-	PostalAddress string    `orm:"column(postal_address);size(256);null"`
-	PostalCode    string    `orm:"column(postal_code);size(32);null"`
-	HomeAddress   string    `orm:"column(home_address);size(500);null"`
-	MobileNo      string    `orm:"column(mobile_no);size(16);null"`
-	Telephone     string    `orm:"column(telephone);size(16);null"`
-	Sex           int8      `orm:"column(sex);null"`
-	IsEnabled     int8      `orm:"column(is_enabled);null"`
-	DelFlag       int8      `orm:"column(del_flag);null"`
-	DelTime       time.Time `orm:"column(del_time);type(datetime);null"`
-	Description   string    `orm:"column(description);size(500);null"`
-	OriginId      string    `orm:"column(origin_id);size(64);null"`
-	CreatedBy     string    `orm:"column(created_by);size(27)"`
-	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
+type SysRole struct {
+	Id           int       `orm:"column(id);pk"`
+	Name         string    `orm:"column(name);size(64)"`
+	Type         int8      `orm:"column(type);null"`
+	DelFlag      int8      `orm:"column(del_flag);null"`
+	DelTime      time.Time `orm:"column(del_time);type(datetime);null"`
+	Description  string    `orm:"column(description);size(500);null"`
+	CreatedBy    string    `orm:"column(created_by);size(27)"`
+	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysStaff) TableName() string {
-	return "sys_staff"
+func (t *SysRole) TableName() string {
+	return "sys_role"
 }
 
 func init() {
-	orm.RegisterModel(new(SysStaff))
+	orm.RegisterModel(new(SysRole))
 }
 
-// AddSysStaff insert a new SysStaff into database and returns
+// AddSysRole insert a new SysRole into database and returns
 // last inserted Id on success.
-func AddSysStaff(m *SysStaff) (id int64, err error) {
+func AddSysRole(m *SysRole) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysStaffById retrieves SysStaff by Id. Returns error if
+// GetSysRoleById retrieves SysRole by Id. Returns error if
 // Id doesn't exist
-func GetSysStaffById(id int) (v *SysStaff, err error) {
+func GetSysRoleById(id int) (v *SysRole, err error) {
 	o := orm.NewOrm()
-	v = &SysStaff{Id: id}
+	v = &SysRole{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysStaff retrieves all SysStaff matches certain condition. Returns empty list if
+// GetAllSysRole retrieves all SysRole matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysStaff(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysRole(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysStaff))
+	qs := o.QueryTable(new(SysRole))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -123,7 +105,7 @@ func GetAllSysStaff(query map[string]string, fields []string, sortby []string, o
 		}
 	}
 
-	var l []SysStaff
+	var l []SysRole
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -146,11 +128,11 @@ func GetAllSysStaff(query map[string]string, fields []string, sortby []string, o
 	return nil, err
 }
 
-// UpdateSysStaff updates SysStaff by Id and returns error if
+// UpdateSysRole updates SysRole by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysStaffById(m *SysStaff) (err error) {
+func UpdateSysRoleById(m *SysRole) (err error) {
 	o := orm.NewOrm()
-	v := SysStaff{Id: m.Id}
+	v := SysRole{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -161,15 +143,15 @@ func UpdateSysStaffById(m *SysStaff) (err error) {
 	return
 }
 
-// DeleteSysStaff deletes SysStaff by Id and returns error if
+// DeleteSysRole deletes SysRole by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysStaff(id int) (err error) {
+func DeleteSysRole(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysStaff{Id: id}
+	v := SysRole{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysStaff{Id: id}); err == nil {
+		if num, err = o.Delete(&SysRole{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

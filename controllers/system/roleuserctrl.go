@@ -1,9 +1,9 @@
-package controllers
+package system
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/softfn/admin/models"
+	ms "github.com/softfn/admin/models/system"
 	"strconv"
 	"strings"
 
@@ -27,14 +27,14 @@ func (c *SysRoleUserController) URLMapping() {
 // Post ...
 // @Title Post
 // @Description create SysRoleUser
-// @Param	body		body 	models.SysRoleUser	true		"body for SysRoleUser content"
-// @Success 201 {int} models.SysRoleUser
+// @Param	body		body 	ms.SysRoleUser	true		"body for SysRoleUser content"
+// @Success 201 {int} ms.SysRoleUser
 // @Failure 403 body is empty
 // @router / [post]
 func (c *SysRoleUserController) Post() {
-	var v models.SysRoleUser
+	var v ms.SysRoleUser
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if _, err := models.AddSysRoleUser(&v); err == nil {
+		if _, err := ms.AddSysRoleUser(&v); err == nil {
 			c.Ctx.Output.SetStatus(201)
 			c.Data["json"] = v
 		} else {
@@ -50,13 +50,13 @@ func (c *SysRoleUserController) Post() {
 // @Title Get One
 // @Description get SysRoleUser by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.SysRoleUser
+// @Success 200 {object} ms.SysRoleUser
 // @Failure 403 :id is empty
 // @router /:id [get]
 func (c *SysRoleUserController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetSysRoleUserById(id)
+	v, err := ms.GetSysRoleUserById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -74,7 +74,7 @@ func (c *SysRoleUserController) GetOne() {
 // @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.SysRoleUser
+// @Success 200 {object} ms.SysRoleUser
 // @Failure 403
 // @router / [get]
 func (c *SysRoleUserController) GetAll() {
@@ -119,7 +119,7 @@ func (c *SysRoleUserController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllSysRoleUser(query, fields, sortby, order, offset, limit)
+	l, err := ms.GetAllSysRoleUser(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -132,16 +132,16 @@ func (c *SysRoleUserController) GetAll() {
 // @Title Put
 // @Description update the SysRoleUser
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.SysRoleUser	true		"body for SysRoleUser content"
-// @Success 200 {object} models.SysRoleUser
+// @Param	body		body 	ms.SysRoleUser	true		"body for SysRoleUser content"
+// @Success 200 {object} ms.SysRoleUser
 // @Failure 403 :id is not int
 // @router /:id [put]
 func (c *SysRoleUserController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v := models.SysRoleUser{Id: id}
+	v := ms.SysRoleUser{Id: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if err := models.UpdateSysRoleUserById(&v); err == nil {
+		if err := ms.UpdateSysRoleUserById(&v); err == nil {
 			c.Data["json"] = "OK"
 		} else {
 			c.Data["json"] = err.Error()
@@ -162,7 +162,7 @@ func (c *SysRoleUserController) Put() {
 func (c *SysRoleUserController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	if err := models.DeleteSysRoleUser(id); err == nil {
+	if err := ms.DeleteSysRoleUser(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

@@ -1,22 +1,22 @@
-package controllers
+package system
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/softfn/admin/models"
+	ms "github.com/softfn/admin/models/system"
 	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
 )
 
-// SysOrgController operations for SysOrg
-type SysOrgController struct {
+// SysGrantController operations for SysGrant
+type SysGrantController struct {
 	beego.Controller
 }
 
 // URLMapping ...
-func (c *SysOrgController) URLMapping() {
+func (c *SysGrantController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
@@ -26,15 +26,15 @@ func (c *SysOrgController) URLMapping() {
 
 // Post ...
 // @Title Post
-// @Description create SysOrg
-// @Param	body		body 	models.SysOrg	true		"body for SysOrg content"
-// @Success 201 {int} models.SysOrg
+// @Description create SysGrant
+// @Param	body		body 	ms.SysGrant	true		"body for SysGrant content"
+// @Success 201 {int} ms.SysGrant
 // @Failure 403 body is empty
 // @router / [post]
-func (c *SysOrgController) Post() {
-	var v models.SysOrg
+func (c *SysGrantController) Post() {
+	var v ms.SysGrant
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if _, err := models.AddSysOrg(&v); err == nil {
+		if _, err := ms.AddSysGrant(&v); err == nil {
 			c.Ctx.Output.SetStatus(201)
 			c.Data["json"] = v
 		} else {
@@ -48,15 +48,15 @@ func (c *SysOrgController) Post() {
 
 // GetOne ...
 // @Title Get One
-// @Description get SysOrg by id
+// @Description get SysGrant by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.SysOrg
+// @Success 200 {object} ms.SysGrant
 // @Failure 403 :id is empty
 // @router /:id [get]
-func (c *SysOrgController) GetOne() {
+func (c *SysGrantController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetSysOrgById(id)
+	v, err := ms.GetSysGrantById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -67,17 +67,17 @@ func (c *SysOrgController) GetOne() {
 
 // GetAll ...
 // @Title Get All
-// @Description get SysOrg
+// @Description get SysGrant
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.SysOrg
+// @Success 200 {object} ms.SysGrant
 // @Failure 403
 // @router / [get]
-func (c *SysOrgController) GetAll() {
+func (c *SysGrantController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -119,7 +119,7 @@ func (c *SysOrgController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllSysOrg(query, fields, sortby, order, offset, limit)
+	l, err := ms.GetAllSysGrant(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -130,18 +130,18 @@ func (c *SysOrgController) GetAll() {
 
 // Put ...
 // @Title Put
-// @Description update the SysOrg
+// @Description update the SysGrant
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.SysOrg	true		"body for SysOrg content"
-// @Success 200 {object} models.SysOrg
+// @Param	body		body 	ms.SysGrant	true		"body for SysGrant content"
+// @Success 200 {object} ms.SysGrant
 // @Failure 403 :id is not int
 // @router /:id [put]
-func (c *SysOrgController) Put() {
+func (c *SysGrantController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v := models.SysOrg{Id: id}
+	v := ms.SysGrant{Id: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if err := models.UpdateSysOrgById(&v); err == nil {
+		if err := ms.UpdateSysGrantById(&v); err == nil {
 			c.Data["json"] = "OK"
 		} else {
 			c.Data["json"] = err.Error()
@@ -154,15 +154,15 @@ func (c *SysOrgController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the SysOrg
+// @Description delete the SysGrant
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
 // @router /:id [delete]
-func (c *SysOrgController) Delete() {
+func (c *SysGrantController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	if err := models.DeleteSysOrg(id); err == nil {
+	if err := ms.DeleteSysGrant(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

@@ -1,22 +1,22 @@
-package controllers
+package system
 
 import (
 	"encoding/json"
 	"errors"
-	"github.com/softfn/admin/models"
+	ms "github.com/softfn/admin/models/system"
 	"strconv"
 	"strings"
 
 	"github.com/astaxie/beego"
 )
 
-// SysStaffController operations for SysStaff
-type SysStaffController struct {
+// SysFunctionController operations for SysFunction
+type SysFunctionController struct {
 	beego.Controller
 }
 
 // URLMapping ...
-func (c *SysStaffController) URLMapping() {
+func (c *SysFunctionController) URLMapping() {
 	c.Mapping("Post", c.Post)
 	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
@@ -26,15 +26,15 @@ func (c *SysStaffController) URLMapping() {
 
 // Post ...
 // @Title Post
-// @Description create SysStaff
-// @Param	body		body 	models.SysStaff	true		"body for SysStaff content"
-// @Success 201 {int} models.SysStaff
+// @Description create SysFunction
+// @Param	body		body 	ms.SysFunction	true		"body for SysFunction content"
+// @Success 201 {int} ms.SysFunction
 // @Failure 403 body is empty
 // @router / [post]
-func (c *SysStaffController) Post() {
-	var v models.SysStaff
+func (c *SysFunctionController) Post() {
+	var v ms.SysFunction
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if _, err := models.AddSysStaff(&v); err == nil {
+		if _, err := ms.AddSysFunction(&v); err == nil {
 			c.Ctx.Output.SetStatus(201)
 			c.Data["json"] = v
 		} else {
@@ -48,15 +48,15 @@ func (c *SysStaffController) Post() {
 
 // GetOne ...
 // @Title Get One
-// @Description get SysStaff by id
+// @Description get SysFunction by id
 // @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.SysStaff
+// @Success 200 {object} ms.SysFunction
 // @Failure 403 :id is empty
 // @router /:id [get]
-func (c *SysStaffController) GetOne() {
+func (c *SysFunctionController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetSysStaffById(id)
+	v, err := ms.GetSysFunctionById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -67,17 +67,17 @@ func (c *SysStaffController) GetOne() {
 
 // GetAll ...
 // @Title Get All
-// @Description get SysStaff
+// @Description get SysFunction
 // @Param	query	query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ..."
 // @Param	limit	query	string	false	"Limit the size of result set. Must be an integer"
 // @Param	offset	query	string	false	"Start position of result set. Must be an integer"
-// @Success 200 {object} models.SysStaff
+// @Success 200 {object} ms.SysFunction
 // @Failure 403
 // @router / [get]
-func (c *SysStaffController) GetAll() {
+func (c *SysFunctionController) GetAll() {
 	var fields []string
 	var sortby []string
 	var order []string
@@ -119,7 +119,7 @@ func (c *SysStaffController) GetAll() {
 		}
 	}
 
-	l, err := models.GetAllSysStaff(query, fields, sortby, order, offset, limit)
+	l, err := ms.GetAllSysFunction(query, fields, sortby, order, offset, limit)
 	if err != nil {
 		c.Data["json"] = err.Error()
 	} else {
@@ -130,18 +130,18 @@ func (c *SysStaffController) GetAll() {
 
 // Put ...
 // @Title Put
-// @Description update the SysStaff
+// @Description update the SysFunction
 // @Param	id		path 	string	true		"The id you want to update"
-// @Param	body		body 	models.SysStaff	true		"body for SysStaff content"
-// @Success 200 {object} models.SysStaff
+// @Param	body		body 	ms.SysFunction	true		"body for SysFunction content"
+// @Success 200 {object} ms.SysFunction
 // @Failure 403 :id is not int
 // @router /:id [put]
-func (c *SysStaffController) Put() {
+func (c *SysFunctionController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	v := models.SysStaff{Id: id}
+	v := ms.SysFunction{Id: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
-		if err := models.UpdateSysStaffById(&v); err == nil {
+		if err := ms.UpdateSysFunctionById(&v); err == nil {
 			c.Data["json"] = "OK"
 		} else {
 			c.Data["json"] = err.Error()
@@ -154,15 +154,15 @@ func (c *SysStaffController) Put() {
 
 // Delete ...
 // @Title Delete
-// @Description delete the SysStaff
+// @Description delete the SysFunction
 // @Param	id		path 	string	true		"The id you want to delete"
 // @Success 200 {string} delete success!
 // @Failure 403 id is empty
 // @router /:id [delete]
-func (c *SysStaffController) Delete() {
+func (c *SysFunctionController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
 	id, _ := strconv.Atoi(idStr)
-	if err := models.DeleteSysStaff(id); err == nil {
+	if err := ms.DeleteSysFunction(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {
 		c.Data["json"] = err.Error()

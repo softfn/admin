@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,51 +10,49 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysGrant struct {
-	Id            int       `orm:"column(id);pk"`
-	PrincipalType int8      `orm:"column(principal_type)"`
-	PrincipalId   string    `orm:"column(principal_id);size(27)"`
-	ResourceType  int8      `orm:"column(resource_type)"`
-	ResourceId    string    `orm:"column(resource_id);size(27)"`
-	CreatedBy     string    `orm:"column(created_by);size(27)"`
-	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
+type SysRoleUser struct {
+	Id           int       `orm:"column(id);pk"`
+	RoleId       string    `orm:"column(role_id);size(27)"`
+	UserId       string    `orm:"column(user_id);size(27)"`
+	CreatedBy    string    `orm:"column(created_by);size(27)"`
+	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysGrant) TableName() string {
-	return "sys_grant"
+func (t *SysRoleUser) TableName() string {
+	return "sys_role_user"
 }
 
 func init() {
-	orm.RegisterModel(new(SysGrant))
+	orm.RegisterModel(new(SysRoleUser))
 }
 
-// AddSysGrant insert a new SysGrant into database and returns
+// AddSysRoleUser insert a new SysRoleUser into database and returns
 // last inserted Id on success.
-func AddSysGrant(m *SysGrant) (id int64, err error) {
+func AddSysRoleUser(m *SysRoleUser) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysGrantById retrieves SysGrant by Id. Returns error if
+// GetSysRoleUserById retrieves SysRoleUser by Id. Returns error if
 // Id doesn't exist
-func GetSysGrantById(id int) (v *SysGrant, err error) {
+func GetSysRoleUserById(id int) (v *SysRoleUser, err error) {
 	o := orm.NewOrm()
-	v = &SysGrant{Id: id}
+	v = &SysRoleUser{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysGrant retrieves all SysGrant matches certain condition. Returns empty list if
+// GetAllSysRoleUser retrieves all SysRoleUser matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysGrant(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysRoleUser(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysGrant))
+	qs := o.QueryTable(new(SysRoleUser))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -104,7 +102,7 @@ func GetAllSysGrant(query map[string]string, fields []string, sortby []string, o
 		}
 	}
 
-	var l []SysGrant
+	var l []SysRoleUser
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -127,11 +125,11 @@ func GetAllSysGrant(query map[string]string, fields []string, sortby []string, o
 	return nil, err
 }
 
-// UpdateSysGrant updates SysGrant by Id and returns error if
+// UpdateSysRoleUser updates SysRoleUser by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysGrantById(m *SysGrant) (err error) {
+func UpdateSysRoleUserById(m *SysRoleUser) (err error) {
 	o := orm.NewOrm()
-	v := SysGrant{Id: m.Id}
+	v := SysRoleUser{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -142,15 +140,15 @@ func UpdateSysGrantById(m *SysGrant) (err error) {
 	return
 }
 
-// DeleteSysGrant deletes SysGrant by Id and returns error if
+// DeleteSysRoleUser deletes SysRoleUser by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysGrant(id int) (err error) {
+func DeleteSysRoleUser(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysGrant{Id: id}
+	v := SysRoleUser{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysGrant{Id: id}); err == nil {
+		if num, err = o.Delete(&SysRoleUser{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}

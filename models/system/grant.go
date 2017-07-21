@@ -1,4 +1,4 @@
-package models
+package system
 
 import (
 	"errors"
@@ -10,52 +10,51 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-type SysRole struct {
-	Id           int       `orm:"column(id);pk"`
-	Name         string    `orm:"column(name);size(64)"`
-	Type         int8      `orm:"column(type);null"`
-	DelFlag      int8      `orm:"column(del_flag);null"`
-	DelTime      time.Time `orm:"column(del_time);type(datetime);null"`
-	Description  string    `orm:"column(description);size(500);null"`
-	CreatedBy    string    `orm:"column(created_by);size(27)"`
-	CreationDate time.Time `orm:"column(creation_date);type(datetime)"`
-	UpdatedBy    string    `orm:"column(updated_by);size(27);null"`
-	UpdateDate   time.Time `orm:"column(update_date);type(datetime);null"`
+type SysGrant struct {
+	Id            int       `orm:"column(id);pk"`
+	PrincipalType int8      `orm:"column(principal_type)"`
+	PrincipalId   string    `orm:"column(principal_id);size(27)"`
+	ResourceType  int8      `orm:"column(resource_type)"`
+	ResourceId    string    `orm:"column(resource_id);size(27)"`
+	CreatedBy     string    `orm:"column(created_by);size(27)"`
+	CreationDate  time.Time `orm:"column(creation_date);type(datetime)"`
+	UpdatedBy     string    `orm:"column(updated_by);size(27);null"`
+	UpdateDate    time.Time `orm:"column(update_date);type(datetime);null"`
 }
 
-func (t *SysRole) TableName() string {
-	return "sys_role"
+func (t *SysGrant) TableName() string {
+	return "sys_grant"
 }
 
 func init() {
-	orm.RegisterModel(new(SysRole))
+	orm.RegisterModel(new(SysGrant))
 }
 
-// AddSysRole insert a new SysRole into database and returns
+// AddSysGrant insert a new SysGrant into database and returns
 // last inserted Id on success.
-func AddSysRole(m *SysRole) (id int64, err error) {
+func AddSysGrant(m *SysGrant) (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Insert(m)
 	return
 }
 
-// GetSysRoleById retrieves SysRole by Id. Returns error if
+// GetSysGrantById retrieves SysGrant by Id. Returns error if
 // Id doesn't exist
-func GetSysRoleById(id int) (v *SysRole, err error) {
+func GetSysGrantById(id int) (v *SysGrant, err error) {
 	o := orm.NewOrm()
-	v = &SysRole{Id: id}
+	v = &SysGrant{Id: id}
 	if err = o.Read(v); err == nil {
 		return v, nil
 	}
 	return nil, err
 }
 
-// GetAllSysRole retrieves all SysRole matches certain condition. Returns empty list if
+// GetAllSysGrant retrieves all SysGrant matches certain condition. Returns empty list if
 // no records exist
-func GetAllSysRole(query map[string]string, fields []string, sortby []string, order []string,
+func GetAllSysGrant(query map[string]string, fields []string, sortby []string, order []string,
 	offset int64, limit int64) (ml []interface{}, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(SysRole))
+	qs := o.QueryTable(new(SysGrant))
 	// query k=v
 	for k, v := range query {
 		// rewrite dot-notation to Object__Attribute
@@ -105,7 +104,7 @@ func GetAllSysRole(query map[string]string, fields []string, sortby []string, or
 		}
 	}
 
-	var l []SysRole
+	var l []SysGrant
 	qs = qs.OrderBy(sortFields...)
 	if _, err = qs.Limit(limit, offset).All(&l, fields...); err == nil {
 		if len(fields) == 0 {
@@ -128,11 +127,11 @@ func GetAllSysRole(query map[string]string, fields []string, sortby []string, or
 	return nil, err
 }
 
-// UpdateSysRole updates SysRole by Id and returns error if
+// UpdateSysGrant updates SysGrant by Id and returns error if
 // the record to be updated doesn't exist
-func UpdateSysRoleById(m *SysRole) (err error) {
+func UpdateSysGrantById(m *SysGrant) (err error) {
 	o := orm.NewOrm()
-	v := SysRole{Id: m.Id}
+	v := SysGrant{Id: m.Id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
@@ -143,15 +142,15 @@ func UpdateSysRoleById(m *SysRole) (err error) {
 	return
 }
 
-// DeleteSysRole deletes SysRole by Id and returns error if
+// DeleteSysGrant deletes SysGrant by Id and returns error if
 // the record to be deleted doesn't exist
-func DeleteSysRole(id int) (err error) {
+func DeleteSysGrant(id int) (err error) {
 	o := orm.NewOrm()
-	v := SysRole{Id: id}
+	v := SysGrant{Id: id}
 	// ascertain id exists in the database
 	if err = o.Read(&v); err == nil {
 		var num int64
-		if num, err = o.Delete(&SysRole{Id: id}); err == nil {
+		if num, err = o.Delete(&SysGrant{Id: id}); err == nil {
 			fmt.Println("Number of records deleted in database:", num)
 		}
 	}
